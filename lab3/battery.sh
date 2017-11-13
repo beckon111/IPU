@@ -1,0 +1,1 @@
+ioreg -w0 -l | grep LegacyBatteryInfo
