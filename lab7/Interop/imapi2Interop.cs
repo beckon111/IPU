@@ -1,7 +1,9 @@
 ﻿// Imapi2Interop.cs
 //
+// by Eric Haddan
+//
 // Parts taken from Microsoft's Interop.cs
-// 
+//
 using System;
 using System.Collections;
 using System.Diagnostics;
