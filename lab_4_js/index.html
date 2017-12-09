@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 4</title>
+    <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./bower_components/bootstrap-table/src/bootstrap-table.css">
+    <script type="text/javascript" src="./bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./bower_components/bootstrap-table/src/bootstrap-table.js"></script>
+</head>
+<body>
+    <table id="devices" data-toggle="table" data-side-pagination="server" data-align="center" data-sort-name="name" data-sort-order="desc">
+    <thead>
+    <tr>
+        <th data-field="name" data-sortable="true" data-align="center">Device name</th>
+        <th data-field="speed" data-align="center">Speed</th>
+        <th data-field="capacity" data-align="center">Capacity</th>
+        <th data-field="available" data-align="center">Available</th>
+        <th data-field="unmount" data-align="center">Unmount</th>
+    </tr>
+    </thead>
+    </table>
+    <script type="text/javascript">
+        $(function () {
+            setInterval(function(){
+                $.ajax({
+                    url: './cgi-bin/lab4.py',
+                    method: 'get',
+                    success: function(devices){
+                        devices = devices[Object.keys(devices)[0]];
+                        devices = devices[Object.keys(devices)[0]];
+                        var data = [];
+                        for (var device in devices) {
+                            if (devices[device]["Media"]) {
+                                var partitions = devices[device]["Media"][Object.keys(devices[device]["Media"])[0]]["Volumes"];
+                                for (var partition in partitions) {
+                                    data.push({
+                                        name: partition,
+                                        speed: devices[device]["Speed"],
+                                        capacity: partitions[partition]["Capacity"],
+                                        available:partitions[partition]["Mount Point"] ? partitions[partition]["Available"] : "Unmounted",
+                                        unmount: partitions[partition]["Mount Point"] ? "<button class=\"btn btn-primary\" onclick=\"unmount('" + partitions[partition]["BSD Name"] + "')\">Unmount</button>" : "Unmounted"
+                                    });
+                                }
+                            } else {
+                                data.push({
+                                    name: device,
+                                    speed: devices[device]["Speed"]
+                                });
+                            }
+                        }
+                        $('#devices').bootstrapTable('load', {total: 100, rows: data});
+                    }
+                });
+
+            },1000);
+        });
+
+        function unmount(name) {
+            $.ajax({
+                url: './cgi-bin/lab4.py',
+                method: 'POST',
+                data: {
+                    device: name
+                }
+            });
+        }
+    </script>
+</body>
+</html>
