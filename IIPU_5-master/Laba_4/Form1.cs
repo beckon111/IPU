@@ -90,7 +90,7 @@ namespace Laba_5
             {
                 //Then we should invoke a method Eject_Device()
                 _deviceList[usbList.CurrentRow.Index].DisEnaDevice("Disable");
-ReloadForm();
+                ReloadForm();
             }
         }
 

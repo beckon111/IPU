@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 4</title>
+    <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./bower_components/bootstrap-table/src/bootstrap-table.css">
+    <script type="text/javascript" src="./bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./bower_components/bootstrap-table/src/bootstrap-table.js"></script>
+</head>
+<body>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="text" class="form-control" id="password">
+    </div>
+    <table id="networks" data-toggle="table" data-side-pagination="server" data-align="center" data-sort-name="name" data-sort-order="desc">
+    <thead>
+    <tr>
+        <th data-field="name" data-sortable="true" data-align="center">Network name</th>
+        <th data-field="mac" data-align="center">MAC</th>
+        <th data-field="signal" data-align="center">Signal</th>
+        <th data-field="security" data-align="center">Security</th>
+        <th data-field="connect" data-align="center">Connect</th>
+    </tr>
+    </thead>
+    </table>
+    <script type="text/javascript">
+        $(function () {
+            setInterval(function(){
+                $.ajax({
+                    url: './cgi-bin/lab6.py',
+                    method: 'get',
+                    success: function(networks) {
+//                        if (typeof(networks = networks[0][1][1][1]) == 'undefined') {
+//                            return;
+//                        }
+//                        if (typeof(networks = networks[0][1][1][1][0][1][13]) == 'undefined') {
+//                            return;
+//                        }
+                        networks = networks[0][1][1][1][0][1][13][1];
+                        console.log(networks);
+                        var data = [];
+                        networks.forEach(function(network){
+                            data.push({
+                                name: network[0],
+                                mac:network[1][1][1],
+                                signal:network[1][5][1],
+                                security:network[1][4][1],
+                                connect: "<button class=\"btn btn-primary\" onclick=\"connect('" + network[1][1][1] + "')\">Connect</button>"
+                            });
+                        });
+                        $('#networks').bootstrapTable('load', {total: 100, rows: data});
+                    }
+                });
+
+            },5000);
+        });
+
+        function connect(name) {
+            $.ajax({
+                url: './cgi-bin/lab6.py',
+                method: 'POST',
+                data: {
+                    network: name,
+                    password: $('#password').val()
+                }
+            });
+        }
+    </script>
+</body>
+</html>
