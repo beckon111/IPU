@@ -1,0 +1,6 @@
+.DS_Store
+/packages
+/.vs
+/Global_Hooker/bin
+/Global_Hooker/obj
+/Global_Hooker/Properties
